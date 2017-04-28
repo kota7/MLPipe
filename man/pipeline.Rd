@@ -17,13 +17,10 @@ library(mlbench)
 data(Sonar)
 X <- Sonar[, -ncol(Sonar)]
 y <- Sonar[, ncol(Sonar)]
-samp <- c(sample(1:100,75), sample(101:200,75))
-m <- mlp_classifier(size=10)
-m$fit(list(x=X[samp,], y=class.ind(y[samp])))
-table(y[-samp], m$predict(list(x=X[-samp,])))
+samp <- c(sample(1:111,75), sample(112:200,75))
 
 p <- pipeline(pc=pca(30), ml=mlp_classifier(size=10))
-p$fit((list(x=X[samp,], y=class.ind(y[samp]))))
+p$fit((list(x=X[samp,], y=y[samp])))
 table(y[-samp], p$predict(list(x=X[-samp,])))
 }
 

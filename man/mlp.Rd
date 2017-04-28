@@ -33,12 +33,12 @@ samp <- c(sample(1:50,25),
           sample(51:100,25),
           sample(101:150,25))
 m <- mlp(size=2, rang=0.1, decay=5e-4, maxit=200)
-m$fit(list(x=X[samp,], y=nnet::class.ind(y[samp])))
+m$fit(list(x=X[samp,], y=y[samp]))
 table(y[-samp], max.col(m$predict(list(x=X[-samp,]))))
 
 # Classification
 m <- mlp_classifier(size=3, maxit=200)
-m$fit(list(x=X[samp,], y=nnet::class.ind(y[samp])))
+m$fit(list(x=X[samp,], y=y[samp]))
 table(y[-samp], m$predict(list(x=X[-samp,])))
 
 # Regression

@@ -9,7 +9,7 @@
 #'           sample(51:100,25),
 #'           sample(101:150,25))
 #' m <- mlp(size=2, rang=0.1, decay=5e-4, maxit=200)
-#' m$fit(list(x=X[samp,], y=nnet::class.ind(y[samp])))
+#' m$fit(list(x=X[samp,], y=y[samp]))
 #' table(y[-samp], max.col(m$predict(list(x=X[-samp,]))))
 #' @export
 mlp <- function(...) { MLP$new(...) }
@@ -21,6 +21,8 @@ MLP <- R6::R6Class(
     parameters=list(size=1),
 
     fit = function(data) {
+      if (is.character(data$y) | is.factor(data$y))
+        data$y <- nnet::class.ind(data$y)
       self$object <- do.call(
         nnet::nnet, c(list(data$x, data$y), self$parameters))
     },
@@ -56,7 +58,7 @@ MLP <- R6::R6Class(
 #'
 #' # Classification
 #' m <- mlp_classifier(size=3, maxit=200)
-#' m$fit(list(x=X[samp,], y=nnet::class.ind(y[samp])))
+#' m$fit(list(x=X[samp,], y=y[samp]))
 #' table(y[-samp], m$predict(list(x=X[-samp,])))
 #' @export
 mlp_classifier <- function(...) { MLPClassifier$new(...) }
