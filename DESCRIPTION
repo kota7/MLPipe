@@ -3,10 +3,9 @@ Type: Package
 Title: Machine Learning Pipeline
 Version: 0.1.0
 Author: Kota Mori
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Maintainer: Kota Mori <kmori05@gmail.com>
+Description: Implements pipeline for machine learning modelling as in python's scikit-learn library.
+License: MIT + file LICENSE
 Imports:
   magrittr,
   nnet,
