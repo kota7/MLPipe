@@ -1,4 +1,4 @@
-Package: mlpipeline
+Package: MLPipe
 Type: Package
 Title: Machine Learning Pipeline
 Version: 0.1.0
