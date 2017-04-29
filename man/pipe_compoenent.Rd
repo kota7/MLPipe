@@ -14,7 +14,7 @@ pipe_compoenent(fit = NULL, transform = NULL, predict = NULL,
 
 \item{incfit}{The function that updates the model object}
 
-\item{...}{Parameters to be passed to other methods.}
+\item{...}{Optional parameters}
 
 \item{transofrm}{The function that transforms data.}
 }

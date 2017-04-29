@@ -1,111 +1,143 @@
-#' Multilayer perceptron with a single hidden layer
-#'
-#' @param ... Parameters passed to \code{nnet::nnet}
-#' @examples
-#' # replication of \code{\link{nnet::nnet}} example
-#' X <- iris[,-5]
-#' y <- iris[,5]
-#' samp <- c(sample(1:50,25),
-#'           sample(51:100,25),
-#'           sample(101:150,25))
-#' m <- mlp(size=2, rang=0.1, decay=5e-4, maxit=200)
-#' m$fit(list(x=X[samp,], y=y[samp]))
-#' table(y[-samp], max.col(m$predict(list(x=X[-samp,]))))
-#' @export
-mlp <- function(...) { MLP$new(...) }
 
 
 MLP <- R6::R6Class(
   'MLP', inherit=PipeComponent,
   public=list(
-    parameters=list(size=1),
+    outlabels=NULL,
 
-    fit = function(data) {
-      if (is.character(data$y) | is.factor(data$y))
-        data$y <- nnet::class.ind(data$y)
-      self$object <- do.call(
-        nnet::nnet, c(list(data$x, data$y), self$parameters))
+    # network architecture
+    hidden_sizes=10, activation='sigm', output='sigm',
+
+    # learning parameters
+    learn_rate=0.9, learn_rate_decay=1, momentum=0.5,
+    num_epoch=5L, batch_size=100L,
+    hidden_dropout=0, visible_dropout=0,
+
+    .fit_helper = function(x, y, initW, initB)
+    {
+      # deepnet::nn.train does not accept x as data.frame
+      if (!is.matrix(x)) x <- as.matrix(x)
+
+      deepnet::nn.train(
+        x, y, initW, initB,
+
+        hidden=self$hidden_sizes,
+        activationfun=self$activation,
+        output=self$output,
+
+        learningrate=self$learn_rate,
+        learningrate_scale=self$learn_rate_decay,
+        momentum=self$momentum,
+        numepochs=self$num_epoch,
+        batchsize=self$batch_size,
+
+        hidden_dropout=self$hidden_dropout,
+        visible_dropout=self$visible_dropout
+      )
     },
 
-    predict = function(data) {
-      predict(self$object, data$x)
+    fit = function(x, y)
+    {
+      # set output labels by the column names of y
+      # if y has no column name, then assign numbers
+      if (self$output == 'softmax') {
+        # if y is a factor or vector, then apply nnet::class.ind to
+        # make it to one-hot form
+        if (is.factor(y) || is.vector(y)) y <- nnet::class.ind(y)
+        self$outlabels <- if (is.null(colnames(y))) 1:ncol(y) else colnames(y)
+      }
+      # now fit
+      self$object <- self$.fit_helper(x, y, NULL, NULL)
     },
 
-    incfit = function(data) {
-      if (is.null(self$object)) {
-        self$fit(data)
+    predict = function(x)
+    {
+      if (!is.matrix(x)) x <- as.matrix(x)
+
+      if (is.null(self$outlabels)) {
+        return(deepnet::nn.predict(self$object, x))
       } else {
-        self$object <- do.call(
-          nnet::nnet, c(list(data$x, data$y, Wts=self$object$wts),
-                        self$parameters))
+        return(self$outlabels[max.col(deepnet::nn.predict(self$object, x))])
       }
     },
 
-    initialize = function(...)
+    incfit = function(x, y)
     {
-      super$initialize(...)
+      self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)
+    },
+
+    initialize = function(
+      hidden_sizes=10, activation='sigm', output='sigm',
+      learn_rate=0.9, learn_rate_decay=1, momentum=0.5,
+      num_epoch=5L, batch_size=100L,
+      hidden_dropout=0, visible_dropout=0, ...)
+    {
+      self$set_parameters(...)
+
+      self$hidden_sizes <- hidden_sizes
+      self$activation <- activation
+      self$output <- output
+
+      self$learn_rate <- learn_rate
+      self$learn_rate_decay <- learn_rate_decay
+      self$momentum <- momentum
+      self$num_epoch <- num_epoch
+      self$batch_size <- batch_size
+
+      self$hidden_dropout <- hidden_dropout
+      self$visible_dropout <- visible_dropout
     }
   )
 )
 
 
 
-
-#' @rdname mlp
-#' @details \code{mlp_classifier} is a wrapper of \code{mlp}, which sets up
-#' appropriate parameters for classification models.
+#' Multilayer perceptron
+#' @param ... initialization arguments for \code{MLP} class
 #' @examples
+#' # example from \code{\link{deepnet::nn.train}}
+#' Var1 <- c(rnorm(50, 1, 0.5), rnorm(50, -0.6, 0.2))
+#' Var2 <- c(rnorm(50, -0.8, 0.2), rnorm(50, 2, 1))
+#' x <- matrix(c(Var1, Var2), nrow = 100, ncol = 2)
+#' y <- c(rep(1, 50), rep(0, 50))
 #'
-#' # Classification
-#' m <- mlp_classifier(size=3, maxit=200)
-#' m$fit(list(x=X[samp,], y=y[samp]))
-#' table(y[-samp], m$predict(list(x=X[-samp,])))
+#' m <- mlp(hidden_sizes=5, learn_rate=0.8, num_epoch=3)
+#' m$fit(x, y)
 #' @export
-mlp_classifier <- function(...) { MLPClassifier$new(...) }
+mlp <- MLP$new
 
 
-MLPClassifier <- R6::R6Class(
-  'MLPClassifier', inherit = MLP,
-  public = list(
-    parameters = list(size=1, softmax=TRUE),
-
-    predict = function(data) {
-      predict(self$object, data$x, type='class')
-    }
-  )
-)
-
-
-
-#' @rdname mlp
-#' @details \code{mlp_regressor} is a wrapper of \code{mlp}, which sets up
-#' appropriate parameters for regression (i.e. numeric outcome) models.
+#' Multilayer perceptron for classification
+#' @param ... initialization arguments for \code{MLP} class
 #' @examples
+#' data(iris)
+#' x <- iris[,-5]
+#' y <- iris[,5]
+#' tr <- c(sample(1:50, 25), sample(51:100, 25), sample(101:150, 25))
 #'
-#' # Regression
-#' library(mlbench)
-#' data(BostonHousing)
-#' X <- BostonHousing[, names(BostonHousing) != c('medv')]
-#' y <- BostonHousing[, 'medv']
-#' samp <- sample.int(length(y), ceiling(length(y)*0.8))
-#' m <- mlp_regressor(size=5, maxit=200, skip=TRUE)
-#' m$fit(list(x=X[samp,], y=y[samp]))
-#' tbl <- cbind(y[-samp], m$predict(list(x=X[-samp,])))
-#' cor(tbl)[2,1]
-#' \dontrun{
-#' plot(tbl, xlab='actual', ylab='predicted')}
+#' m <- mlp_classifier(num_epoch=100)
+#' m$fit(x[tr,], y[tr])
+#' table(y[-tr], m$predict(x[-tr,]))
 #' @export
-mlp_regressor <- function(...) { MLPRegressor$new(...) }
+mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 
 
-MLPRegressor <- R6::R6Class(
-  'MLPRegressor', inherit = MLP,
-  public = list(
-    parameters = list(size=1, linout=TRUE),
+#' Multilayer perceptron for regression
+#' @param ... initialization arguments for \code{MLP} class
+#' @examples
+#' n <- 1000
+#' x <- runif(2*n)
+#' dim(x) <- c(n, 2)
+#' y <- pmin(x[,1], x[,2])
+#' m <- mlp_regressor(hidden_sizes=10, num_epoch=500, batch_size=25)
+#' m$fit(x, y)
+#'
+#' newx <- expand.grid(x1=seq(0, 1, length=50), x2=seq(0, 1, length=50))
+#' pred <- m$predict(newx)
+#' dim(pred) <- c(50, 50)
+#' contour(pred)
+#' @export
+mlp_regressor <- function(...) { MLP$new(output='linear', ...) }
 
-    predict = function(data) {
-      predict(self$object, data$x)
-    }
-  )
 
-)
+

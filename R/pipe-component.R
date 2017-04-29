@@ -3,7 +3,7 @@
 #' @param fit The function that creates a model object
 #' @param predict The function that makes prediction from new data
 #' @param incfit The function that updates the model object
-#' @param ... Parameters to be passed to other methods.
+#' @param ... Optional parameters
 #' @return \code{PipeComponent} class object
 #' @export
 pipe_compoenent <- function(fit=NULL, transform=NULL,
@@ -21,10 +21,10 @@ PipeComponent <- R6::R6Class(
   public=list(
     object=NULL, parameters=list(),
 
-    transform = function(data) { data },
-    fit = function(data) { },
-    incfit = function(data) { },
-    predict = function(data) { NULL },
+    transform = function(x, y=NULL) { list(x=x, y=y) },
+    fit = function(x, y=NULL) { },
+    incfit = function(x, y=NULL) { },
+    predict = function(x) { },
 
     set_parameters = function(...)
     {
