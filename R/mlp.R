@@ -130,7 +130,7 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #' x <- runif(2*n)
 #' dim(x) <- c(n, 2)
 #' y <- pmin(x[,1], x[,2])
-#' m <- mlp_regressor(hidden_sizes=10, num_epoch=500, batch_size=25)
+#' m <- mlp_regressor(hidden_sizes=c(10), num_epoch=500, batch_size=25)
 #' m$fit(x, y)
 #'
 #' newx <- expand.grid(x1=seq(0, 1, length=50), x2=seq(0, 1, length=50))
@@ -140,7 +140,7 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #' \dontrun{
 #' dim(pred) <- c(50, 50)
 #' dim(true) <- c(50, 50)
-#' par(mfrow=c(1,2))
+#' par(mfrow=c(1, 2))
 #' contour(true)
 #' contour(pred)}
 #' @export
