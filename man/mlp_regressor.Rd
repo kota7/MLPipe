@@ -7,7 +7,10 @@
 mlp_regressor(...)
 }
 \arguments{
-\item{...}{initialization arguments for \code{MLP} class}
+\item{...}{initialization arguments for \code{MLP} class except for \code{output}}
+}
+\value{
+\code{MLP} class object
 }
 \description{
 Multilayer perceptron for regression

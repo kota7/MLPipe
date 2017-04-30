@@ -48,9 +48,10 @@ MLP <- R6::R6Class(
       }
       # now fit
       self$object <- self$.fit_helper(x, y, NULL, NULL)
+      invisible(self)
     },
 
-    predict = function(x)
+    predict = function(x, y=NULL)
     {
       if (!is.matrix(x)) x <- as.matrix(x)
 
@@ -64,6 +65,7 @@ MLP <- R6::R6Class(
     incfit = function(x, y)
     {
       self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)
+      invisible(self)
     },
 
     initialize = function(
@@ -94,6 +96,7 @@ MLP <- R6::R6Class(
 
 #' Multilayer perceptron
 #' @param ... initialization arguments for \code{MLP} class
+#' @return \code{MLP} class object
 #' @examples
 #' # example from \code{\link{deepnet::nn.train}}
 #' Var1 <- c(rnorm(50, 1, 0.5), rnorm(50, -0.6, 0.2))
@@ -108,7 +111,8 @@ mlp <- MLP$new
 
 
 #' Multilayer perceptron for classification
-#' @param ... initialization arguments for \code{MLP} class
+#' @param ... initialization arguments for \code{MLP} class except for \code{output}
+#' @return \code{MLP} class object
 #' @examples
 #' data(iris)
 #' x <- iris[,-5]
@@ -123,7 +127,8 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 
 
 #' Multilayer perceptron for regression
-#' @param ... initialization arguments for \code{MLP} class
+#' @param ... initialization arguments for \code{MLP} class except for \code{output}
+#' @return \code{MLP} class object
 #' @examples
 #' \dontrun{
 #' set.seed(123)

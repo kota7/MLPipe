@@ -9,6 +9,9 @@ mlp(...)
 \arguments{
 \item{...}{initialization arguments for \code{MLP} class}
 }
+\value{
+\code{MLP} class object
+}
 \description{
 Multilayer perceptron
 }

@@ -6,9 +6,9 @@ PipeComponent <- R6::R6Class(
     object=NULL, parameters=list(),
 
     transform = function(x, y=NULL) { list(x=x, y=y) },
-    fit = function(x, y=NULL) { },
-    incfit = function(x, y=NULL) { },
-    predict = function(x) { },
+    fit = function(x, y=NULL) { invisible(self) },
+    incfit = function(x, y=NULL) { invisible(self) },
+    predict = function(x, y=NULL) { },
 
     set_parameters = function(...)
     {

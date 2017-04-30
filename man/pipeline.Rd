@@ -9,6 +9,9 @@ pipeline(...)
 \arguments{
 \item{...}{Arbitrary number of pipeline components}
 }
+\value{
+\code{Pipeline} class object
+}
 \description{
 Machine learning pipeline
 }

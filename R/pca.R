@@ -1,5 +1,6 @@
 
 
+
 PCAExtractor <- R6::R6Class(
   'PCAExtractor',
   inherit=PipeComponent,
@@ -10,6 +11,7 @@ PCAExtractor <- R6::R6Class(
     fit = function(x, y=NULL)
     {
       self$object <- stats::prcomp(x, center=self$center, scale.=self$scale)
+      invisible(self)
     },
 
     transform = function(x, y=NULL)
@@ -32,19 +34,38 @@ PCAExtractor <- R6::R6Class(
   )
 )
 
-
 #' Feature extraction by principal component analysis
-#' @param ... initialization parameters for \code{PCAExtractor} class
-#' @export
+#'
+#' @name pca
+#' @aliases pca_extractor
+#' @section Usage:
+#' \preformatted{pca_extractor(ncomp, center = TRUE, scale = TRUE)}
+#'
+#' @section Arguments:
+#' \describe{
+#' \item{\code{ncomp}}{number of principal components to extract}
+#' \item{\code{center}}{either a logical value that indicates whether variables should be                centered to zero-mean, or numeric vector of center values}
+#' \item{\code{scale}}{either a logical value that indicates whether variables should be scaled to unit-variance, or numeric vector of scale values}
+#' }
+#'
+#' @section Class Methods:
+#' \describe{
+#' \item{\preformatted{fit(x, y = NULL)}}{conduct principal component analysis of \code{x}}
+#' \item{\preformatted{transform(x, y = NULL)}}{extract principal components of \code{x}}
+#' \item{\preformatted{predict(x, y = NULL)}}{returns all principal components of \code{x}}
+#' \item{\preformatted{incfit(x, y = NULL)}}{not implemented (nothing happens)}
+#' }
+#'
+#' @section Details:
+#' Uses \code{\link[stats]{prcomp}} as the backend.
+#'
 #' @examples
 #' p <- pca_extractor(2, center=TRUE, scale=TRUE)
 #' p$fit(USArrests)
 #' p$transform(USArrests)
 #' p$predict(USArrests)
+NULL
+
+#' @export
 pca_extractor <- PCAExtractor$new
-# @param ncomp number of principal components to extract
-# @param center a logical indicating whether variables should be shifted to
-# zero-centered, or numeric vector specifying the arbitrary center values
-# @param scale a logical indicating whether variables should be scaled to
-# unit-variance, or numeric vector specifying the arbitrary scale
 

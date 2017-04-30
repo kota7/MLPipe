@@ -61,6 +61,7 @@ Pipeline <- R6::R6Class(
 #' Machine learning pipeline
 #'
 #' @param ... Arbitrary number of pipeline components
+#' @return \code{Pipeline} class object
 #' @examples
 #' set.seed(123)
 #' data(Sonar, package='mlbench')
