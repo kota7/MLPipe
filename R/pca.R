@@ -1,9 +1,8 @@
 
 
-
+#' @export
 PCAExtractor <- R6::R6Class(
-  'PCAExtractor',
-  inherit=PipeComponent,
+  'PCAExtractor', inherit=PipeComponent,
 
   public=list(
     ncomp=1L, center=TRUE, scale=FALSE,
@@ -30,6 +29,7 @@ PCAExtractor <- R6::R6Class(
       self$ncomp <- ncomp
       self$center <- center
       self$scale <- scale
+      invisible(self)
     }
   )
 )
@@ -37,7 +37,8 @@ PCAExtractor <- R6::R6Class(
 #' Feature extraction by principal component analysis
 #'
 #' @name pca
-#' @aliases pca_extractor
+#' @aliases pca_extractor PCAExtractor
+#'
 #' @section Usage:
 #' \preformatted{pca_extractor(ncomp, center = TRUE, scale = TRUE)}
 #'
@@ -47,6 +48,9 @@ PCAExtractor <- R6::R6Class(
 #' \item{\code{center}}{either a logical value that indicates whether variables should be                centered to zero-mean, or numeric vector of center values}
 #' \item{\code{scale}}{either a logical value that indicates whether variables should be scaled to unit-variance, or numeric vector of scale values}
 #' }
+#'
+#' @section Value:
+#' \code{PCAExtractor} class object
 #'
 #' @section Class Methods:
 #' \describe{

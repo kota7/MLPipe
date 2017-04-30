@@ -1,40 +1,54 @@
 
-
+#' @export
 PipeComponent <- R6::R6Class(
   'PipeComponent',
   public=list(
-    object=NULL, parameters=list(),
+    object=NULL,
 
-    transform = function(x, y=NULL) { list(x=x, y=y) },
-    fit = function(x, y=NULL) { invisible(self) },
-    incfit = function(x, y=NULL) { invisible(self) },
-    predict = function(x, y=NULL) { },
+    transform = function(x=NULL, y=NULL) { list(x=x, y=y) },
+    fit       = function(x=NULL, y=NULL) { invisible(NULL) },
+    incfit    = function(x=NULL, y=NULL) { invisible(NULL) },
+    predict   = function(x=NULL, y=NULL) { NULL },
 
-    set_parameters = function(...)
-    {
-      tmp <- list(...)
-      self$parameters <- self$parameters[setdiff(names(self$parameters),
-                                                 names(tmp))]
-      self$parameters <- c(self$parameters, tmp)
-    },
-
-    initialize = function(fit=NULL, transform=NULL,
-                          predict=NULL, incfit=NULL, ...)
-    {
-      if (!is.null(transform)) self$transform <- transform
-      if (!is.null(fit)) self$fit <- fit
-      if (!is.null(predict)) self$predict <- predict
-      if (!is.null(incfit)) self$incfit <- incfit
-      self$set_parameters(...)
-    }
+    initialize = function() { invisible(self) }
   )
 )
 
 
 
-#' Create a custom component for pipeline
-#' @param ... initialization arguments for \code{PipeComponent} class
-#' @return \code{PipeComponent} class object
-#' @export
-pipe_compoenent <- PipeComponent$new
+#' Default (do-nothing) pipeline component
+#'
+#' This is a pipeline component doing nothing.
+#' It is mainly used like a virtual class,
+#' where functions are defined in children classes.
+#'
+#' @name pipe_component
+#' @aliases PipeComponent
+#'
+#' @section Usage:
+#' \preformatted{pipe_component()}
+#'
+#' @section Value:
+#' \code{PipeComponent} class object
+#'
+#' @section Class Attributes:
+#' \describe{
+#' \item{\code{objects}}{an R object. Typically used to store a model object}
+#' }
+#'
+#' @section Class Methods:
+#' \describe{
+#' \item{\preformatted{fit(x=NULL, y=NULL)}}{do nothing}
+#' \item{\preformatted{transpose(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
+#' \item{\preformatted{predict(x=NULL, y=NULL)}}{return \code{NULL}}
+#' \item{\preformatted{incfit(x=NULL, y=NULL)}}{do nothing}
+#' }
+#'
+#' @examples
+#' p <- pipe_component()
+#' p$fit(x=c(1,5,8), y=c('a','b','a'))  # nothing happens
+#' p$transform(x=1:10, y=1:10)          # return data as-is
+NULL
 
+#' @export
+pipe_component <- PipeComponent$new
