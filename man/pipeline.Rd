@@ -13,14 +13,15 @@ pipeline(...)
 Machine learning pipeline
 }
 \examples{
-library(mlbench)
-data(Sonar)
+set.seed(123)
+data(Sonar, package='mlbench')
 X <- Sonar[, -ncol(Sonar)]
 y <- Sonar[, ncol(Sonar)]
-samp <- c(sample(1:111,75), sample(112:200,75))
+tr <- c(sample(1:111,75), sample(112:200,75))
 
-p <- pipeline(pc=pca(30), ml=mlp_classifier(size=10))
-p$fit((list(x=X[samp,], y=y[samp])))
-table(y[-samp], p$predict(list(x=X[-samp,])))
+p <- pipeline(pc=pca_extractor(30),
+              ml=mlp_classifier(hidden_sizes=c(5, 5), num_epoch=1000))
+p$fit(X[tr,], y[tr])
+table(y[-tr], p$predict(X[-tr,]))
 }
 
