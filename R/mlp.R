@@ -62,7 +62,7 @@ MLP <- R6::R6Class(
       }
     },
 
-    incfit = function(x, y)
+    incr_fit = function(x, y)
     {
       self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)
       invisible(self)
@@ -135,9 +135,8 @@ MLP <- R6::R6Class(
 #' @section Class Methods:
 #' \describe{
 #' \item{\preformatted{fit(x, y)}}{train neural network}
-#' \item{\preformatted{transform(x, y)}}{not implemented (return data as they are)}
 #' \item{\preformatted{predict(x, y = NULL)}}{return predicted values}
-#' \item{\preformatted{incfit(x, y)}}{train neural network incrementally}
+#' \item{\preformatted{incr_fit(x, y)}}{train neural network incrementally}
 #' }
 #'
 #' @section Details:

@@ -53,9 +53,8 @@ mlp_regressor(hidden_sizes = 10, activation = 'sigm',
 
 \describe{
 \item{\preformatted{fit(x, y)}}{train neural network}
-\item{\preformatted{transform(x, y)}}{not implemented (return data as they are)}
 \item{\preformatted{predict(x, y = NULL)}}{return predicted values}
-\item{\preformatted{incfit(x, y)}}{train neural network incrementally}
+\item{\preformatted{incr_fit(x, y)}}{train neural network incrementally}
 }
 }
 

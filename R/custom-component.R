@@ -6,7 +6,9 @@
 #' @param fit fit function
 #' @param transform transform function
 #' @param predict predict function
-#' @param incfit incfit function
+#' @param incr_fit incremantal fit function
+#' @param inv_transform inverse-transform function
+#' @param predict_proba probability predict function
 #' @param initialize intialize function
 #' @param ... additional class attributes, they must be given with names and there must be no name conflict
 #' @param as_private names of additional parameters to be stored as private fields
@@ -14,15 +16,15 @@
 #' @return an R6ClassGenerator
 #'
 #' @details This function is used to define a custom pipeline component.
-#' Users can define functions \code{fit}, \code{transform}, \code{predict}, \code{incfit} or \code{initialize} with desired behavior, together with addional public and private fields.
+#' Users can define functions with desired behavior, together with addional public and private fields.
 #'
 #' To be properly incorporated to a pipeline framework, the functions should satisfy the following properties:
 #' \itemize{
-#' \item{\code{fit}, \code{incfit}, \code{transform} and \code{predict} functions should take exactly two arguments \code{x} and \code{y}}
-#' \item{\code{initialize}, \code{fit} and \code{incfit} functions should return \code{invisible(self)}}
-#' \item{\code{transform} function should return a list of \code{x} and \code{y}}
+#' \item{\code{fit}, \code{incr_fit}, \code{transform}, \code{predict}, \code{inv_transform} and \code{predict_proba} functions should take exactly two arguments \code{x} and \code{y}}
+#' \item{\code{initialize}, \code{fit} and \code{incr_fit} functions should return \code{invisible(self)}}
+#' \item{\code{transform} and \code{inv_transform} functions should return a list of \code{x} and \code{y}}
 #' }
-#' Typically, \code{self$object} is used to store the fitted model object, and is updated by \code{fit} and \code{incfit} functions.  Alternatively, one may also define additional class attributes to store relevant information.
+#' Typically, \code{self$object} is used to store the fitted model object, and is updated by \code{fit} and \code{incr_fit} functions.  Alternatively, one may also define additional class attributes to store relevant information.
 #'
 #' @export
 #'
@@ -50,7 +52,7 @@
 #'     self$n <- length(x)
 #'     invisible(self)
 #'   },
-#'   incfit = function(x, y=NULL) {
+#'   incr_fit = function(x, y=NULL) {
 #'     self$n <- self$n + length(x)
 #'     self$sum <- self$sum + sum(x)
 #'     invisible(self)
@@ -69,8 +71,9 @@
 #' m$incfit(10)
 #' m$predict()
 custom_pipe_component <- function(classname='custom',
-                                  fit=NULL, transform=NULL,
-                                  predict=NULL, incfit=NULL, initialize=NULL,
+                                  fit=NULL, transform=NULL, predict=NULL,
+                                  incr_fit=NULL, inv_transform=NULL, predict_proba=NULL,
+                                  initialize=NULL,
                                   ..., as_private=character(0))
 {
   new_class <- R6::R6Class(classname, inherit=PipeComponent)
