@@ -3,6 +3,7 @@
 export(MLP)
 export(PCAExtractor)
 export(PipeComponent)
+export(Pipeline)
 export(custom_pipe_component)
 export(mlp)
 export(mlp_classifier)

@@ -97,6 +97,7 @@ MLP <- R6::R6Class(
 #'
 #' @name mlp
 #' @aliases mlp_classifier mlp_regressor MLP
+#'
 #' @section Usage:
 #' \preformatted{
 #' mlp(output = 'sigm', hidden_sizes = 10, activation = 'sigm',
