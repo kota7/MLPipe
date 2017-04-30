@@ -125,6 +125,7 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #' Multilayer perceptron for regression
 #' @param ... initialization arguments for \code{MLP} class
 #' @examples
+#' set.seed(123)
 #' n <- 1000
 #' x <- runif(2*n)
 #' dim(x) <- c(n, 2)
@@ -134,8 +135,14 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #'
 #' newx <- expand.grid(x1=seq(0, 1, length=50), x2=seq(0, 1, length=50))
 #' pred <- m$predict(newx)
+#' true <- pmin(newx[,1], newx[,2])
+#' cor(true, pred)
+#' \dontrun{
 #' dim(pred) <- c(50, 50)
-#' contour(pred)
+#' dim(true) <- c(50, 50)
+#' par(mfrow=c(1,2))
+#' contour(true)
+#' contour(pred)}
 #' @export
 mlp_regressor <- function(...) { MLP$new(output='linear', ...) }
 
