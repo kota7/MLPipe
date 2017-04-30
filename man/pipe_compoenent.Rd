@@ -4,19 +4,10 @@
 \alias{pipe_compoenent}
 \title{Create a custom component for pipeline}
 \usage{
-pipe_compoenent(fit = NULL, transform = NULL, predict = NULL,
-  incfit = NULL, ...)
+pipe_compoenent(...)
 }
 \arguments{
-\item{fit}{The function that creates a model object}
-
-\item{predict}{The function that makes prediction from new data}
-
-\item{incfit}{The function that updates the model object}
-
-\item{...}{Optional parameters}
-
-\item{transofrm}{The function that transforms data.}
+\item{...}{initialization arguments for \code{PipeComponent} class}
 }
 \value{
 \code{PipeComponent} class object

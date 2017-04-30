@@ -1,21 +1,5 @@
-#' Create a custom component for pipeline
-#' @param transofrm The function that transforms data.
-#' @param fit The function that creates a model object
-#' @param predict The function that makes prediction from new data
-#' @param incfit The function that updates the model object
-#' @param ... Optional parameters
-#' @return \code{PipeComponent} class object
-#' @export
-pipe_compoenent <- function(fit=NULL, transform=NULL,
-                            predict=NULL, incfit=NULL, ...)
-{
-  PipeCompoenent$new(fit=fit, transform=transform,
-                     predict=predict, incfit=incfit, ...)
-}
 
 
-#' Custom component for pipeline
-#' @export
 PipeComponent <- R6::R6Class(
   'PipeComponent',
   public=list(
@@ -45,4 +29,12 @@ PipeComponent <- R6::R6Class(
     }
   )
 )
+
+
+
+#' Create a custom component for pipeline
+#' @param ... initialization arguments for \code{PipeComponent} class
+#' @return \code{PipeComponent} class object
+#' @export
+pipe_compoenent <- PipeComponent$new
 

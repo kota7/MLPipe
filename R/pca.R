@@ -34,11 +34,7 @@ PCAExtractor <- R6::R6Class(
 
 
 #' Feature extraction by principal component analysis
-#' @param ncomp number of principal components to extract
-#' @param center a logical indicating whether variables should be shifted to
-#' zero-centered, or numeric vector specifying the arbitrary center values
-#' @param scale a logical indicating whether variables should be scaled to
-#' unit-variance, or numeric vector specifying the arbitrary scale
+#' @param ... initialization parameters for \code{PCAExtractor} class
 #' @export
 #' @examples
 #' p <- pca_extractor(2, center=TRUE, scale=TRUE)
@@ -46,4 +42,9 @@ PCAExtractor <- R6::R6Class(
 #' p$transform(USArrests)
 #' p$predict(USArrests)
 pca_extractor <- PCAExtractor$new
+# @param ncomp number of principal components to extract
+# @param center a logical indicating whether variables should be shifted to
+# zero-centered, or numeric vector specifying the arbitrary center values
+# @param scale a logical indicating whether variables should be scaled to
+# unit-variance, or numeric vector specifying the arbitrary scale
 

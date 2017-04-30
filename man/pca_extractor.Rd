@@ -7,13 +7,7 @@
 pca_extractor(...)
 }
 \arguments{
-\item{ncomp}{number of principal components to extract}
-
-\item{center}{a logical indicating whether variables should be shifted to
-zero-centered, or numeric vector specifying the arbitrary center values}
-
-\item{scale}{a logical indicating whether variables should be scaled to
-unit-variance, or numeric vector specifying the arbitrary scale}
+\item{...}{initialization parameters for \code{PCAExtractor} class}
 }
 \description{
 Feature extraction by principal component analysis

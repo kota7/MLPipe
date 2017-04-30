@@ -125,6 +125,7 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #' Multilayer perceptron for regression
 #' @param ... initialization arguments for \code{MLP} class
 #' @examples
+#' \dontrun{
 #' set.seed(123)
 #' n <- 1000
 #' x <- runif(2*n)
@@ -137,7 +138,6 @@ mlp_classifier <- function(...) { MLP$new(output='softmax', ...) }
 #' pred <- m$predict(newx)
 #' true <- pmin(newx[,1], newx[,2])
 #' cor(true, pred)
-#' \dontrun{
 #' dim(pred) <- c(50, 50)
 #' dim(true) <- c(50, 50)
 #' par(mfrow=c(1, 2))
