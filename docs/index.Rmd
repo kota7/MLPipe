@@ -24,5 +24,56 @@ devtools::install_github('kota7/MLPipe')
 
 ## Quick Start
 
-TBA
+
+Let's use `Sonar` data from `mlbench` package as an example.
+`Sonar` data contain 60 numeric variables and 1 label (factor variable). 
+The label represents the types of sonar targets: "rock" by `"R"` and "metal" by `"M"`.  
+Our goal is to predict the label from the other variables.
+See `?(mlbench::Sonar)` for more details about the data.
+```{r}
+set.seed(123)
+data(Sonar, package='mlbench')
+head(Sonar[1:8])
+head(Sonar[52:61])
+```
+
+We pick 80% of the samples as the training data, and use the rest for the performance test.
+```{r}
+X <- Sonar[, -ncol(Sonar)]
+y <- Sonar[, ncol(Sonar)]
+tr <- c(sample(1:111,111*0.8), sample(112:200,89*0.8))
+```
+
+Suppose that we would like to first conduct the dimensionality reduction of the features, and then fit to a classification model.  For example, the first step can be done by extraction of principal components, and the second step can be a neural network model.
+We can construct a **pipeline** of this modelling procedure by the code below:
+
+```{r}
+library(MLPipe)
+p <- pipeline(pc=pca_extractor(ncomp=30),
+              ml=mlp_classifier(hidden_sizes=c(5, 5), num_epoch=1000))
+```
+
+\code{pipeline} function takes arbitrary number of `pipe components` objects.
+Each pipe component represents a modelling step, and they are in the order of procedure.
+
+We can now fit the the model to the training data by `fit` method of the pipeline.
+`fit` method takes exactly two inputs, `x` and `y`,
+
+```{r}
+p$fit(X[tr,], y[tr])
+```
+
+By this single call of `fit`, each component of the pipeline is fitted.  
+In this example, first, principal component analysis for `x` is conducted, and the first 30 (specified as `ncomp`) principal components are extracted as the features.  Then, the neural network model is estimated with these new features and `y`.
+
+`mlp_classifier` has the `predict` function, which returns the predicted labels for new data.
+We can make a confusion matrix using it.
+```{r}
+table(y[-tr], p$predict(X[-tr,]))
+```
+
+We can also use `mlp_classifier`'s accuracy method to see the fraction of correct classifications.
+```{r}
+p$evaluate('accuracy', X[-tr,], y[-tr])
+```
 
