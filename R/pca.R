@@ -54,7 +54,7 @@ PCAExtractor <- R6::R6Class(
 #' @section Arguments:
 #' \describe{
 #' \item{\code{ncomp}}{number of principal components to extract}
-#' \item{\code{center}}{either a logical value that indicates whether variables should be                centered to zero-mean, or numeric vector of center values}
+#' \item{\code{center}}{either a logical value that indicates whether variables should be centered to zero-mean, or numeric vector of center values}
 #' \item{\code{scale}}{either a logical value that indicates whether variables should be scaled to unit-variance, or numeric vector of scale values}
 #' }
 #'

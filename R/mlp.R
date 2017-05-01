@@ -15,9 +15,7 @@ MLP <- R6::R6Class(
 
     .fit_helper = function(x, y, initW, initB)
     {
-      # deepnet::nn.train does not accept x as data.frame
-      if (!is.matrix(x)) x <- as.matrix(x)
-
+      # assumes x and y are already formatted by ".format" functions
       deepnet::nn.train(
         x, y, initW, initB,
 
@@ -36,14 +34,42 @@ MLP <- R6::R6Class(
       )
     },
 
+    .format_y = function(y)
+    {
+      # softmax output assumes that y is a matrix
+      # if y is a factor or vector, then apply nnet::class.ind to
+      # make it to one-hot form
+      if (self$output == 'softmax') {
+        if (is.factor(y) || is.vector(y)) y <- nnet::class.ind(y)
+      }
+      y
+    },
+
+    .format_x = function(x)
+    {
+      # deepnet::nn.train does not accept x as data.frame
+      # so convert x to a matrix
+      if (!is.matrix(x)) x <- as.matrix(x)
+      x
+    },
+
+    .to_class_label = function(y)
+    {
+      # if y is matrix, then convert it to class label by row-wise max
+      # otherwise return y as-is
+      # error is outlabels is not defined
+      if (is.null(self$outlabels)) stop('class label not defined')
+      if (is.matrix(y)) self$outlabels[max.col(y)] else y
+    },
+
     fit = function(x, y)
     {
+      y <- self$.format_y(y)
+      x <- self$.format_x(x)
+
       # set output labels by the column names of y
       # if y has no column name, then assign numbers
       if (self$output == 'softmax') {
-        # if y is a factor or vector, then apply nnet::class.ind to
-        # make it to one-hot form
-        if (is.factor(y) || is.vector(y)) y <- nnet::class.ind(y)
         self$outlabels <- if (is.null(colnames(y))) 1:ncol(y) else colnames(y)
       }
       # now fit
@@ -53,18 +79,15 @@ MLP <- R6::R6Class(
 
     predict = function(x, y=NULL)
     {
-      if (!is.matrix(x)) x <- as.matrix(x)
+      x <- self$.format_x(x)
 
-      if (is.null(self$outlabels)) {
-        return(deepnet::nn.predict(self$object, x))
-      } else {
-        return(self$outlabels[max.col(deepnet::nn.predict(self$object, x))])
-      }
+      p <- deepnet::nn.predict(self$object, x)
+      if (is.null(self$outlabels)) p else self$.to_class_label(p)
     },
 
     predict_proba = function(x, y=NULL)
     {
-      if (!is.matrix(x)) x <- as.matrix(x)
+      x <- self$.format_x(x)
       if (self$output=='linear') warning('predicted value may not be in [0, 1]')
 
       deepnet::nn.predict(self$object, x)
@@ -72,6 +95,9 @@ MLP <- R6::R6Class(
 
     incr_fit = function(x, y)
     {
+      y <- self$.format_y(y)
+      x <- self$.format_x(x)
+
       self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)
       invisible(self)
     },
@@ -95,6 +121,43 @@ MLP <- R6::R6Class(
       self$hidden_dropout <- hidden_dropout
       self$visible_dropout <- visible_dropout
       invisible(self)
+    },
+
+
+    # performance evaluation
+    mse = function(x, y)
+    {
+      y <- self$.format_y(y)
+      x <- self$.format_x(x)
+
+      p <- deepnet::nn.predict(self$object, x)
+      mean((p-y)^2)
+    },
+
+    cross_entropy = function(x, y)
+    {
+      y <- self$.format_y(y)
+      x <- self$.format_x(x)
+
+      p <- deepnet::nn.predict(self$object, x)
+      if (any(p <= 0) || any(p >= 1)) {
+        stop('cross entropy loss requires prediction in (0,1)')
+      }
+
+      if (self$output == 'softmax') {
+        return(-mean(y*log(p)))
+      } else {
+        return(-mean(y*log(p) + (1-y)*log(1-p)))
+      }
+    },
+
+    accuracy = function(x, y)
+    {
+      if (is.null(self$outlabels)) stop('accuracy is not computed for continuous prediction')
+
+      p <- self$predict(x)
+      y <- self$.to_class_label(y)
+      mean(y==p)
     }
   )
 )
@@ -169,9 +232,10 @@ MLP <- R6::R6Class(
 #' m <- mlp_classifier(num_epoch=300)
 #' m$fit(x[tr,], y[tr])
 #' table(y[-tr], m$predict(x[-tr,]))
+#' m$accuracy(x[-tr,], y[-tr])
 #'
 #' \dontrun{
-#' # regression example
+#' # regression example (takes a few seconds)
 #' n <- 1000
 #' x <- runif(2*n)
 #' dim(x) <- c(n, 2)
@@ -186,7 +250,9 @@ MLP <- R6::R6Class(
 #' dim(true) <- c(50, 50)
 #' par(mfrow=c(1, 2))
 #' contour(true)
-#' contour(pred)}
+#' contour(pred)
+#' m$mse(newx, as.numeric(true))
+#' }
 NULL
 
 #' @export

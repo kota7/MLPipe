@@ -81,9 +81,10 @@ tr <- c(sample(1:50, 25), sample(51:100, 25), sample(101:150, 25))
 m <- mlp_classifier(num_epoch=300)
 m$fit(x[tr,], y[tr])
 table(y[-tr], m$predict(x[-tr,]))
+m$accuracy(x[-tr,], y[-tr])
 
 \dontrun{
-# regression example
+# regression example (takes a few seconds)
 n <- 1000
 x <- runif(2*n)
 dim(x) <- c(n, 2)
@@ -98,6 +99,8 @@ dim(pred) <- c(50, 50)
 dim(true) <- c(50, 50)
 par(mfrow=c(1, 2))
 contour(true)
-contour(pred)}
+contour(pred)
+m$mse(newx, as.numeric(true))
+}
 }
 
