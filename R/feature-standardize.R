@@ -38,6 +38,12 @@ FeatureStandardizer <- R6::R6Class(
       list(x=x2, y=y)
     },
 
+    inv_transform = function(x, y=NULL)
+    {
+      x2 <- inv_scale(x, center=self$centers, scale=self$scales)
+      list(x=x2, y=y)
+    },
+
     initialize = function(method='l2', tol=sqrt(.Machine$double.eps))
     {
       self$method  <- method
@@ -87,6 +93,8 @@ FeatureStandardizer <- R6::R6Class(
 #' z <- fs$transform(mtcars)$x
 #' apply(z, MARGIN=2, FUN=mean)
 #' apply(z, MARGIN=2, FUN=sd)
+#' w <- fs$inv_transform(z)$x
+#' range(mtcars-w)
 #'
 #' # zero-mean, unit-MAD (mean absolute deviation)
 #' fs <- feature_standardizer(method='l1')
@@ -94,12 +102,16 @@ FeatureStandardizer <- R6::R6Class(
 #' z <- fs$transform(mtcars)$x
 #' apply(z, MARGIN=2, FUN=mean)
 #' apply(z, MARGIN=2, FUN=lsr::aad)
+#' w <- fs$inv_transform(z)$x
+#' range(mtcars-w)
 #'
 #' # standardize to unit interval
 #' fs$set_parameters(method='range')
 #' fs$fit(mtcars)
 #' z <- fs$transform(mtcars)$x
 #' apply(z, MARGIN=2, FUN=range)
+#' w <- fs$inv_transform(z)$x
+#' range(mtcars-w)
 NULL
 
 #' @export

@@ -46,6 +46,8 @@ fs$fit(mtcars)
 z <- fs$transform(mtcars)$x
 apply(z, MARGIN=2, FUN=mean)
 apply(z, MARGIN=2, FUN=sd)
+w <- fs$inv_transform(z)$x
+range(mtcars-w)
 
 # zero-mean, unit-MAD (mean absolute deviation)
 fs <- feature_standardizer(method='l1')
@@ -53,11 +55,15 @@ fs$fit(mtcars)
 z <- fs$transform(mtcars)$x
 apply(z, MARGIN=2, FUN=mean)
 apply(z, MARGIN=2, FUN=lsr::aad)
+w <- fs$inv_transform(z)$x
+range(mtcars-w)
 
 # standardize to unit interval
 fs$set_parameters(method='range')
 fs$fit(mtcars)
 z <- fs$transform(mtcars)$x
 apply(z, MARGIN=2, FUN=range)
+w <- fs$inv_transform(z)$x
+range(mtcars-w)
 }
 
