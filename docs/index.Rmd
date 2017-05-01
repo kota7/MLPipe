@@ -1,0 +1,28 @@
+---
+title: "MLPipe package"
+author: "Kota Mori"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+`MLPipe` privides interface for creating machine learning pipeline in the style of Python's [scikit-learn](http://scikit-learn.org/) library.
+
+
+## Installation
+
+Install from GitHub:
+
+```{r, eval=FALSE}
+devtools::install_github('kota7/MLPipe')
+```
+
+
+## Quick Start
+
+TBA
+
