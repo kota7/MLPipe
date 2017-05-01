@@ -2,6 +2,7 @@
 #' @export
 MLP <- R6::R6Class(
   'MLP', inherit=PipeComponent,
+
   public=list(
     outlabels=NULL,
 
@@ -13,6 +14,107 @@ MLP <- R6::R6Class(
     num_epoch=5L, batch_size=100L,
     hidden_dropout=0, visible_dropout=0,
 
+
+    fit = function(x, y)
+    {
+      y <- private$.format_y(y)
+      x <- private$.format_x(x)
+
+      # set output labels by the column names of y
+      # if y has no column name, then assign numbers
+      if (self$output == 'softmax') {
+        self$outlabels <- if (is.null(colnames(y))) 1:ncol(y) else colnames(y)
+      }
+      # now fit
+      self$object <- private$.fit_helper(x, y, NULL, NULL)
+      invisible(self)
+    },
+
+    predict = function(x, y=NULL)
+    {
+      x <- private$.format_x(x)
+
+      p <- deepnet::nn.predict(self$object, x)
+      if (is.null(self$outlabels)) p else private$.to_class_label(p)
+    },
+
+    predict_proba = function(x, y=NULL)
+    {
+      x <- self$.format_x(x)
+      if (self$output=='linear') warning('predicted value may not be in [0, 1]')
+
+      deepnet::nn.predict(self$object, x)
+    },
+
+    incr_fit = function(x, y)
+    {
+      y <- private$.format_y(y)
+      x <- private$.format_x(x)
+
+      self$object <- private$.fit_helper(x, y, self$object$W, self$object$B)
+      invisible(self)
+    },
+
+    initialize = function(
+      output='sigm', hidden_sizes=10, activation='sigm',
+      learn_rate=0.9, learn_rate_decay=1, momentum=0.5,
+      num_epoch=5, batch_size=100,
+      hidden_dropout=0, visible_dropout=0)
+    {
+      self$output <- output
+      self$hidden_sizes <- hidden_sizes
+      self$activation <- activation
+
+      self$learn_rate <- learn_rate
+      self$learn_rate_decay <- learn_rate_decay
+      self$momentum <- momentum
+      self$num_epoch <- num_epoch
+      self$batch_size <- batch_size
+
+      self$hidden_dropout <- hidden_dropout
+      self$visible_dropout <- visible_dropout
+      invisible(self)
+    },
+
+
+    # performance evaluation
+    mse = function(x, y)
+    {
+      y <- private$.format_y(y)
+      x <- private$.format_x(x)
+
+      p <- deepnet::nn.predict(self$object, x)
+      mean((p-y)^2)
+    },
+
+    cross_entropy = function(x, y)
+    {
+      y <- private$.format_y(y)
+      x <- private$.format_x(x)
+
+      p <- deepnet::nn.predict(self$object, x)
+      if (any(p <= 0) || any(p >= 1)) {
+        stop('cross entropy loss requires prediction in (0,1)')
+      }
+
+      if (self$output == 'softmax') {
+        return(-mean(y*log(p)))
+      } else {
+        return(-mean(y*log(p) + (1-y)*log(1-p)))
+      }
+    },
+
+    accuracy = function(x, y)
+    {
+      if (is.null(self$outlabels)) stop('accuracy is not computed for continuous prediction')
+
+      p <- self$predict(x)
+      y <- private$.to_class_label(y)
+      mean(y==p)
+    }
+  ),
+
+  private = list(
     .fit_helper = function(x, y, initW, initB)
     {
       # assumes x and y are already formatted by ".format" functions
@@ -60,104 +162,6 @@ MLP <- R6::R6Class(
       # error is outlabels is not defined
       if (is.null(self$outlabels)) stop('class label not defined')
       if (is.matrix(y)) self$outlabels[max.col(y)] else y
-    },
-
-    fit = function(x, y)
-    {
-      y <- self$.format_y(y)
-      x <- self$.format_x(x)
-
-      # set output labels by the column names of y
-      # if y has no column name, then assign numbers
-      if (self$output == 'softmax') {
-        self$outlabels <- if (is.null(colnames(y))) 1:ncol(y) else colnames(y)
-      }
-      # now fit
-      self$object <- self$.fit_helper(x, y, NULL, NULL)
-      invisible(self)
-    },
-
-    predict = function(x, y=NULL)
-    {
-      x <- self$.format_x(x)
-
-      p <- deepnet::nn.predict(self$object, x)
-      if (is.null(self$outlabels)) p else self$.to_class_label(p)
-    },
-
-    predict_proba = function(x, y=NULL)
-    {
-      x <- self$.format_x(x)
-      if (self$output=='linear') warning('predicted value may not be in [0, 1]')
-
-      deepnet::nn.predict(self$object, x)
-    },
-
-    incr_fit = function(x, y)
-    {
-      y <- self$.format_y(y)
-      x <- self$.format_x(x)
-
-      self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)
-      invisible(self)
-    },
-
-    initialize = function(
-      output='sigm', hidden_sizes=10, activation='sigm',
-      learn_rate=0.9, learn_rate_decay=1, momentum=0.5,
-      num_epoch=5, batch_size=100,
-      hidden_dropout=0, visible_dropout=0)
-    {
-      self$output <- output
-      self$hidden_sizes <- hidden_sizes
-      self$activation <- activation
-
-      self$learn_rate <- learn_rate
-      self$learn_rate_decay <- learn_rate_decay
-      self$momentum <- momentum
-      self$num_epoch <- num_epoch
-      self$batch_size <- batch_size
-
-      self$hidden_dropout <- hidden_dropout
-      self$visible_dropout <- visible_dropout
-      invisible(self)
-    },
-
-
-    # performance evaluation
-    mse = function(x, y)
-    {
-      y <- self$.format_y(y)
-      x <- self$.format_x(x)
-
-      p <- deepnet::nn.predict(self$object, x)
-      mean((p-y)^2)
-    },
-
-    cross_entropy = function(x, y)
-    {
-      y <- self$.format_y(y)
-      x <- self$.format_x(x)
-
-      p <- deepnet::nn.predict(self$object, x)
-      if (any(p <= 0) || any(p >= 1)) {
-        stop('cross entropy loss requires prediction in (0,1)')
-      }
-
-      if (self$output == 'softmax') {
-        return(-mean(y*log(p)))
-      } else {
-        return(-mean(y*log(p) + (1-y)*log(1-p)))
-      }
-    },
-
-    accuracy = function(x, y)
-    {
-      if (is.null(self$outlabels)) stop('accuracy is not computed for continuous prediction')
-
-      p <- self$predict(x)
-      y <- self$.to_class_label(y)
-      mean(y==p)
     }
   )
 )

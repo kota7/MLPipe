@@ -4,17 +4,37 @@
 \alias{Pipeline}
 \alias{pipeline}
 \title{Machine learning pipeline}
-\usage{
-pipeline(...)
-}
-\arguments{
-\item{...}{Arbitrary number of pipeline components}
-}
-\value{
-\code{Pipeline} class object
-}
 \description{
 Machine learning pipeline
+}
+\section{Usage}{
+
+\preformatted{pipline(..., invert_prediction = FALSE)}
+}
+
+\section{Arguments}{
+
+\describe{
+\item{...}{Arbitrary number of pipeline components}
+\item{invert_prediction}{if TRUE, then \code{predict} function inverts predicted values}
+}
+}
+
+\section{Value}{
+
+\code{Pipeline} class object
+}
+
+\section{Class Methods}{
+
+\describe{
+\item{\preformatted{fit(x = NULL, y = NULL)}}{fit and transform each component}
+\item{\preformatted{transform(x = NULL, y = NULL)}}{transform from beginning to end}
+\item{\preformatted{predict(x = NULL, y = NULL)}}{return predicted values}
+\item{\preformatted{incr_fit(x = NULL, y = NULL)}}{fit incrementally each component}
+\item{\preformatted{inv_transform(x = NULL, y = NULL)}}{invert transformation from end to beginning}
+\item{\preformatted{evaluate(funcname, x = NULL, y = NULL, ...)}}{evaluate arbitrary function at the last component}
+}
 }
 \examples{
 set.seed(123)
@@ -27,5 +47,6 @@ p <- pipeline(pc=pca_extractor(30),
               ml=mlp_classifier(hidden_sizes=c(5, 5), num_epoch=1000))
 p$fit(X[tr,], y[tr])
 table(y[-tr], p$predict(X[-tr,]))
+p$evaluate('accuracy', X[-tr,], y[-tr])
 }
 
