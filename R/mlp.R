@@ -208,11 +208,16 @@ MLP <- R6::R6Class(
 #' \item{\preformatted{fit(x, y)}}{train neural network}
 #' \item{\preformatted{predict(x, y = NULL)}}{return predicted values}
 #' \item{\preformatted{incr_fit(x, y)}}{train neural network incrementally}
+#' \item{\preformatted{predict_proba(x, y = NULL)}}{return probability prediction}
+#'
+#' \item{\preformatted{mse(x, y)}}{return the mean-squared error}
+#' \item{\preformatted{cross_entropy(x, y)}}{return the cross entropy loss if appropriate}
+#' \item{\preformatted{accuracy(x, y)}}{return the classification accuracy if appropriate}
 #' }
 #'
 #' @section Details:
 #' Uses \code{\link[deepnet]{nn.train}} as the backend.
-#' \code{fit} method trains the network from the scratch; Use \code{incfit} method for incremental learning.
+#' \code{fit} method trains the network from the scratch; Use \code{incr_fit} method for incremental learning.
 #'
 #' @examples
 #' set.seed(123)
