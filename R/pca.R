@@ -84,7 +84,7 @@ PCAExtractor <- R6::R6Class(
 #' p2$fit(USArrests)
 #' p2$transform(USArrests)
 #' p2$predict(USArrests)
-#' with ncomp = ncol(x), inv_transform recovers the data perfectly
+#' # when ncomp = ncol(x), inv_transform recovers the data perfectly
 #' cor(as.numeric(as.matrix(USArrests)),
 #'     as.numeric(p2$inv_transform(p2$transform(USArrests)$x)$x))
 NULL

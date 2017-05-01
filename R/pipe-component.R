@@ -13,7 +13,32 @@ PipeComponent <- R6::R6Class(
     inv_transform = function(x=NULL, y=NULL) { list(x=x, y=y) },
     predict_proba  = function(x=NULL, y=NULL) { NULL },
 
-    initialize = function() { invisible(self) }
+    initialize = function() { invisible(self) },
+
+    set_parameters = function(..., as_private=character(0))
+    {
+      params <- list(...)
+      unnamed <- if (is.null(names(params))) rep(TRUE, length(params)) else names(params)==''
+      if (any(unnamed)) {
+        warning('unnamed parameters are ignored')
+        params <- params[!unnamed]
+      }
+      if (length(params)==0) return(invisible(self))
+
+      pri_params <- params[names(params) %in% as_private]
+      pub_params <- params[!(names(params) %in% as_private)]
+
+      if (length(pri_params) > 0) {
+        Map(function(name, value) private[[name]] <- value,
+            names(pri_params), pri_params)
+      }
+      if (length(pub_params) > 0) {
+        Map(function(name, value) self[[name]] <- value,
+            names(pub_params), pub_params)
+      }
+
+      invisible(self)
+    }
   )
 )
 
@@ -53,6 +78,10 @@ PipeComponent <- R6::R6Class(
 #' p <- pipe_component()
 #' p$fit(x=c(1,5,8), y=c('a','b','a'))  # nothing happens
 #' p$transform(x=1:10, y=1:10)          # return data as-is
+#'
+#' p$set_parameters(object=1) # use this to update attributes
+#' # but cannot do so for functions
+#' #p$set_parameters(fit = function() { 'hello world' })
 NULL
 
 #' @export

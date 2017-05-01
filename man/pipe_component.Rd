@@ -41,5 +41,9 @@ where functions are defined in children classes.
 p <- pipe_component()
 p$fit(x=c(1,5,8), y=c('a','b','a'))  # nothing happens
 p$transform(x=1:10, y=1:10)          # return data as-is
+
+p$set_parameters(object=1) # use this to update attributes
+# but cannot do so for functions
+#p$set_parameters(fit = function() { 'hello world' })
 }
 

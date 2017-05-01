@@ -62,6 +62,14 @@ MLP <- R6::R6Class(
       }
     },
 
+    predict_proba = function(x, y=NULL)
+    {
+      if (!is.matrix(x)) x <- as.matrix(x)
+      if (self$output=='linear') warning('predicted value may not be in [0, 1]')
+
+      deepnet::nn.predict(self$object, x)
+    },
+
     incr_fit = function(x, y)
     {
       self$object <- self$.fit_helper(x, y, self$object$W, self$object$B)

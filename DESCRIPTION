@@ -8,6 +8,7 @@ Description: Implements pipeline for machine learning modelling in the style of 
 License: MIT + file LICENSE
 Imports:
   deepnet,
+  lsr,
   magrittr,
   nnet,
   stats,

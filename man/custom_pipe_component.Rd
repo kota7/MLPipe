@@ -87,7 +87,7 @@ MeanCalculator <- custom_pipe_component(
 m <- MeanCalculator$new()
 m$fit(1:9)
 m$predict()
-m$incfit(10)
+m$incr_fit(10)
 m$predict()
 }
 

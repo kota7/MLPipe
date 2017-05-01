@@ -68,7 +68,7 @@
 #' m <- MeanCalculator$new()
 #' m$fit(1:9)
 #' m$predict()
-#' m$incfit(10)
+#' m$incr_fit(10)
 #' m$predict()
 custom_pipe_component <- function(classname='custom',
                                   fit=NULL, transform=NULL, predict=NULL,
@@ -78,7 +78,7 @@ custom_pipe_component <- function(classname='custom',
 {
   new_class <- R6::R6Class(classname, inherit=PipeComponent)
   if (is.function(fit))        new_class$set('public', 'fit', fit)
-  if (is.function(incfit))     new_class$set('public', 'incfit', incfit)
+  if (is.function(incr_fit))   new_class$set('public', 'incr_fit', incr_fit)
   if (is.function(transform))  new_class$set('public', 'transform', transform)
   if (is.function(predict))    new_class$set('public', 'predict', predict)
   if (is.function(initialize)) new_class$set('public', 'initialize', initialize)
