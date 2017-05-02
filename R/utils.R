@@ -19,6 +19,43 @@ inv_scale <- function(x, center, scale., tol=sqrt(.Machine$double.eps))
 }
 
 
+update_mean_and_sd <- function(m, s, n, x)
+{
+  # online update of mean and standard deviation
+  #
+  # args
+  #   m: current mean
+  #   s: current sd
+  #   n: current nobs
+  #   x: new data matrix
+  #
+  # returns
+  #   list of updated m and s
+
+  if (is.vector(x)) {
+    dim(x) <- c(length(x), 1)
+  }
+  stopifnot(length(dim(x)) == 2)
+  if (!is.matrix(x)) {
+    x <- as.matrix(x)
+  }
+
+  new_n <- dim(x)[1] + n
+  new_m <- m*n/new_n + apply(x, MARGIN=2, FUN=sum, na.rm=TRUE)/new_n
+
+  # back compute the mean squares
+  ms1 <- s^2 + m^2/(n-1)*n
+  # new mean squares
+  ms <- ms1*(n-1)/(new_n-1) + colSums(x^2, na.rm=TRUE)/(new_n-1)
+  new_s <- sqrt(ms - new_n/(new_n-1)*new_m^2)
+
+  list(m=new_m, s=new_s)
+}
+
+
+
+
+
 # multiple value assigment
 # but slow... not in use currently
 # Reference:

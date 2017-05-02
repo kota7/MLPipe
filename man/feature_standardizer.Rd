@@ -30,6 +30,16 @@ Standardize each feature of data. Three methodologies are supported:
 \code{FeatureStandardizer} class object
 }
 
+\section{Class Methods}{
+
+\describe{
+\item{\preformatted{fit(x, y = NULL)}}{fit to \code{x} and store the center and scale values}
+\item{\preformatted{transform(x, y = NULL)}}{returns standardized \code{x} matrix}
+\item{\preformatted{inv_transform(x, y = NULL)}}{returns pre-standardized \code{x} matrix}
+\item{\preformatted{incr_fit(x, y = NULL)}}{currently not implemented}
+}
+}
+
 \section{Details}{
 
 When fitted to data, the feature-wise centers and scales are stored in the object,
@@ -65,5 +75,22 @@ z <- fs$transform(mtcars)$x
 apply(z, MARGIN=2, FUN=range)
 w <- fs$inv_transform(z)$x
 range(mtcars-w)
+
+# incremental fit is allowed for l2 and range method
+fs$set_parameters(method='l2')
+fs$fit(mtcars)
+fs2 <- feature_standardizer(method='l2')
+fs2$incr_fit(mtcars[1:10,])
+fs2$incr_fit(mtcars[11:32,])
+cbind(fs$centers, fs2$centers)
+cbind(fs$scales, fs2$scales)
+
+fs$set_parameters(method='range')
+fs$fit(mtcars)
+fs2$set_parameters(method='range')
+fs2$incr_fit(mtcars[1:14,])
+fs2$incr_fit(mtcars[15:32,])
+cbind(fs$centers, fs2$centers)
+cbind(fs$scales, fs2$scales)
 }
 

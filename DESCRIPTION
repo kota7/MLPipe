@@ -9,6 +9,7 @@ License: MIT + file LICENSE
 Imports:
   deepnet,
   geoR,
+  glmnet,
   lsr,
   magrittr,
   nnet,

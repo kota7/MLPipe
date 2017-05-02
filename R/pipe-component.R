@@ -6,12 +6,13 @@ PipeComponent <- R6::R6Class(
     object=NULL,
 
     transform = function(x=NULL, y=NULL) { list(x=x, y=y) },
+    inv_transform = function(x=NULL, y=NULL) { list(x=x, y=y) },
+
     fit       = function(x=NULL, y=NULL) { invisible(NULL) },
-    predict   = function(x=NULL, y=NULL) { NULL },
     incr_fit  = function(x=NULL, y=NULL) { invisible(NULL) },
 
-    inv_transform = function(x=NULL, y=NULL) { list(x=x, y=y) },
-    predict_proba  = function(x=NULL, y=NULL) { NULL },
+    predict   = function(x=NULL, ...) { NULL },
+    predict_proba  = function(x=NULL, ...) { NULL },
 
     initialize = function() { invisible(self) },
 
@@ -68,9 +69,9 @@ PipeComponent <- R6::R6Class(
 #' \describe{
 #' \item{\preformatted{fit(x=NULL, y=NULL)}}{do nothing}
 #' \item{\preformatted{transpose(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
-#' \item{\preformatted{predict(x=NULL, y=NULL)}}{return \code{NULL}}
+#' \item{\preformatted{predict(x=NULL, ...)}}{return \code{NULL}}
 #' \item{\preformatted{incr_fit(x=NULL, y=NULL)}}{do nothing}
-#' \item{\preformatted{predict_proba(x=NULL, y=NULL)}}{return \code{NULL}}
+#' \item{\preformatted{predict_proba(x=NULL, ...)}}{return \code{NULL}}
 #' \item{\preformatted{inv_transform(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
 #' }
 #'

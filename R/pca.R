@@ -18,7 +18,7 @@ PCAExtractor <- R6::R6Class(
       list(x=predict(self$object, x)[, 1:self$ncomp], y=y)
     },
 
-    predict = function(x, y=NULL)
+    predict = function(x, ...)
     {
       predict(self$object, x)
     },

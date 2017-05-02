@@ -2,6 +2,7 @@
 
 export(BoxCoxTransform)
 export(FeatureStandardizer)
+export(GLM)
 export(MLP)
 export(PCAExtractor)
 export(PipeComponent)

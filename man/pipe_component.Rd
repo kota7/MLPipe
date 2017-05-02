@@ -31,9 +31,9 @@ where functions are defined in children classes.
 \describe{
 \item{\preformatted{fit(x=NULL, y=NULL)}}{do nothing}
 \item{\preformatted{transpose(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
-\item{\preformatted{predict(x=NULL, y=NULL)}}{return \code{NULL}}
+\item{\preformatted{predict(x=NULL, ...)}}{return \code{NULL}}
 \item{\preformatted{incr_fit(x=NULL, y=NULL)}}{do nothing}
-\item{\preformatted{predict_proba(x=NULL, y=NULL)}}{return \code{NULL}}
+\item{\preformatted{predict_proba(x=NULL, ...)}}{return \code{NULL}}
 \item{\preformatted{inv_transform(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
 }
 }

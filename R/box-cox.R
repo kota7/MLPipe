@@ -25,7 +25,7 @@ BoxCoxTransform <- R6::R6Class(
       list(x=x, y=y2)
     },
 
-    predict = function(x=NULL, y=NULL)
+    predict = function(x=NULL, ...)
     {
       if (is.null(self$beta)) stop('coefficients have not been estimated')
 
@@ -113,7 +113,7 @@ BoxCoxTransform <- R6::R6Class(
 #' \item{\preformatted{fit(x = NULL, y)}}{if \code{skipfit} is \code{FALSE}, then estimate the lambda parameter(s) by the maximum likelihood, otherwise, the parameters are fixed. In either case, regression coeffients beta are estimated by the least squares}
 #' \item{\preformatted{transform(x = NULL, y)}}{transform \code{y} and returns list of \code{x} and \code{y}}
 #' \item{\preformatted{inv_transform(x = NULL, y)}}{inverse transform \code{y} and returns list of \code{x} and \code{y}}
-#' \item{\preformatted{predict(x, y = NULL)}}{return predicted values of \code{y} in the pre-transfom scale}
+#' \item{\preformatted{predict(x, ...)}}{return predicted values of \code{y} in the pre-transfom scale}
 #' \item{\preformatted{incr_fit(x, y)}}{not available}
 #' }
 #'

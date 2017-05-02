@@ -30,7 +30,7 @@ MLP <- R6::R6Class(
       invisible(self)
     },
 
-    predict = function(x, y=NULL)
+    predict = function(x, ...)
     {
       x <- private$.format_x(x)
 
@@ -38,7 +38,7 @@ MLP <- R6::R6Class(
       if (is.null(self$outlabels)) p else private$.to_class_label(p)
     },
 
-    predict_proba = function(x, y=NULL)
+    predict_proba = function(x, ...)
     {
       x <- self$.format_x(x)
       if (self$output=='linear') warning('predicted value may not be in [0, 1]')
@@ -210,9 +210,9 @@ MLP <- R6::R6Class(
 #' @section Class Methods:
 #' \describe{
 #' \item{\preformatted{fit(x, y)}}{train neural network}
-#' \item{\preformatted{predict(x, y = NULL)}}{return predicted values}
+#' \item{\preformatted{predict(x, ...)}}{return predicted values}
 #' \item{\preformatted{incr_fit(x, y)}}{train neural network incrementally}
-#' \item{\preformatted{predict_proba(x, y = NULL)}}{return probability prediction}
+#' \item{\preformatted{predict_proba(x, ...)}}{return probability prediction}
 #'
 #' \item{\preformatted{mse(x, y)}}{return the mean-squared error}
 #' \item{\preformatted{cross_entropy(x, y)}}{return the cross entropy loss if appropriate}

@@ -53,9 +53,9 @@ mlp_regressor(hidden_sizes = 10, activation = 'sigm',
 
 \describe{
 \item{\preformatted{fit(x, y)}}{train neural network}
-\item{\preformatted{predict(x, y = NULL)}}{return predicted values}
+\item{\preformatted{predict(x, ...)}}{return predicted values}
 \item{\preformatted{incr_fit(x, y)}}{train neural network incrementally}
-\item{\preformatted{predict_proba(x, y = NULL)}}{return probability prediction}
+\item{\preformatted{predict_proba(x, ...)}}{return probability prediction}
 
 \item{\preformatted{mse(x, y)}}{return the mean-squared error}
 \item{\preformatted{cross_entropy(x, y)}}{return the cross entropy loss if appropriate}
