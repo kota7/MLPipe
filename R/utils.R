@@ -54,6 +54,30 @@ update_mean_and_sd <- function(m, s, n, x)
 
 
 
+is.R6ClassOf <- function(x, class)
+{
+  # check if x is an R6 class of a certain class, or it inherits it
+  #
+  # args:
+  #   x: R object
+  #   class: R6 class
+  #
+  # returns:
+  #   logical
+
+  # must be an R6 class in the first place
+  if (!R6::is.R6Class(x)) return(FALSE)
+
+  # is x the class?
+  if (identical(x, class)) return(TRUE)
+
+  # maybe the parent?
+  inherit <- x$get_inherit()
+  if (is.null(inherit)) return(FALSE)
+  is.R6ClassOf(inherit, class)
+}
+
+
 
 
 # multiple value assigment

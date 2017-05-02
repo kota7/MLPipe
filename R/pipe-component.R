@@ -92,3 +92,22 @@ NULL
 
 #' @export
 pipe_component <- PipeComponent$new
+
+
+
+#' Is this a PipeComponent class or an object?
+#'
+#' Checks if x is a PipeComponent class or an object
+#'
+#' @param x R object
+#' @return logical
+#' @export
+#' @examples
+#' is.PipeComponentClass(MLP)    # true
+#' is.PipeComponentClass(mlp())  # false because this is an instance
+#' is.PipeComponent(mlp())       # true
+is.PipeComponent <- function(x) { inherits(x, 'PipeComponent') }
+
+#' @export
+#' @rdname is.PipeComponent
+is.PipeComponentClass <- function(x) { is.R6ClassOf(x, PipeComponent) }

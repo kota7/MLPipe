@@ -11,9 +11,9 @@
 #' @export
 #' @seealso \code{\link{custom_pipe_component}}
 #' @examples
-#' validate_pipe_component(MLP)
-#' validate_pipe_component(PipeComponent)
-validate_pipe_component <- function(x, verbose=2)
+#' validate_pipe_component_class(MLP)
+#' validate_pipe_component_class(PipeComponent)
+validate_pipe_component_class <- function(x, verbose=2)
 {
 
   ## must be an R6 class generator
@@ -61,14 +61,14 @@ validate_pipe_component <- function(x, verbose=2)
   if (verbose >= 2) cat(':) found all required public methods\n')
 
   ## check the arguments of methods
-  public_methods_xy <- c('fit', 'incr_fit',
-                        'transform', 'inv_transform')
-  for (m in public_methods_xy)
+  public_methods_only_xy <- c('fit', 'incr_fit',
+                              'transform', 'inv_transform')
+  for (m in public_methods_only_xy)
   {
     f <- find_public_method(x, m)
     stopifnot(is.function(f))
     a <- formalArgs(f)
-    if (length(a) < 2 || any(a[1:2] != c('x', 'y'))) {
+    if (!identical(a, c('x', 'y'))) {
       if (verbose >= 1) {
         message('first two arguments of ', m,
                 ' must by "x, y" where we have: ',
@@ -77,8 +77,8 @@ validate_pipe_component <- function(x, verbose=2)
       }
     }
   }
-  public_methods_only_x <- c('predict', 'predict_proba')
-  for (m in public_methods_only_x)
+  public_methods_x_not_y <- c('predict', 'predict_proba')
+  for (m in public_methods_x_not_y)
   {
     f <- find_public_method(x, m)
     stopifnot(is.function(f))

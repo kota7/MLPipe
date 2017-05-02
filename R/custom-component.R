@@ -77,11 +77,13 @@ custom_pipe_component <- function(classname='custom',
                                   ..., as_private=character(0))
 {
   new_class <- R6::R6Class(classname, inherit=PipeComponent)
-  if (is.function(fit))        new_class$set('public', 'fit', fit)
-  if (is.function(incr_fit))   new_class$set('public', 'incr_fit', incr_fit)
-  if (is.function(transform))  new_class$set('public', 'transform', transform)
-  if (is.function(predict))    new_class$set('public', 'predict', predict)
-  if (is.function(initialize)) new_class$set('public', 'initialize', initialize)
+  if (is.function(initialize))    new_class$set('public', 'initialize', initialize)
+  if (is.function(fit))           new_class$set('public', 'fit', fit)
+  if (is.function(incr_fit))      new_class$set('public', 'incr_fit', incr_fit)
+  if (is.function(transform))     new_class$set('public', 'transform', transform)
+  if (is.function(inv_transform)) new_class$set('public', 'inv_transform', inv_transform)
+  if (is.function(predict))       new_class$set('public', 'predict', predict)
+  if (is.function(predict_proba)) new_class$set('public', 'predict_proba', predict_proba)
 
   new_params <- list(...)
   if (length(new_params) > 0) {

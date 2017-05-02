@@ -7,18 +7,19 @@ Maintainer: Kota Mori <kmori05@gmail.com>
 Description: Implements pipeline for machine learning modelling in the style of python's pipeline in scikit-learn library.
 License: MIT + file LICENSE
 Imports:
-  deepnet,
-  geoR,
-  glmnet,
-  lsr,
-  magrittr,
-  nnet,
-  stats,
-  R6
+    deepnet,
+    geoR,
+    glmnet,
+    lsr,
+    magrittr,
+    nnet,
+    stats,
+    R6
 Suggests:
-  datasets,
-  graphics,
-  mlbench
+    datasets,
+    graphics,
+    mlbench,
+    testthat
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
