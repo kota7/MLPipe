@@ -5,7 +5,7 @@ GLM <- R6::R6Class(
 
   public = list(
     family='gaussian', intercept=TRUE, standardize=TRUE,
-    alpha=1, lambda=0,
+    alpha=1, lambda=0, choose_lambda=TRUE,
 
     # decided to fix lambda to a single value
     #nlambda=100,
@@ -36,7 +36,5 @@ GLM <- R6::R6Class(
         type.multinomial = if (self$group_mutinom) 'grouped' else 'ungrouped'
       )
     }
-
-
   )
 )

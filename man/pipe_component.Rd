@@ -11,7 +11,14 @@ where functions are defined in children classes.
 }
 \section{Usage}{
 
-\preformatted{pipe_component()}
+\preformatted{pipe_component(...)}
+}
+
+\section{Arguments}{
+
+\describe{
+\item{\code{...}}{not in use}
+}
 }
 
 \section{Value}{

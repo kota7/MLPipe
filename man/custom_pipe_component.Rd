@@ -79,7 +79,7 @@ MeanCalculator <- custom_pipe_component(
   predict = function(x=NULL, y=NULL) {
     self$sum / self$n
   },
-  initialize = function() {
+  initialize = function(...) {
     invisible(self)
   },
   sum=0, n=0

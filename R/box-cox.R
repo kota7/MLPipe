@@ -63,7 +63,7 @@ BoxCoxTransform <- R6::R6Class(
       invisible(self)
     },
 
-    initialize = function(lambda=1, lambda2=NULL, skipfit=FALSE, tol=1e-5)
+    initialize = function(lambda=1, lambda2=NULL, skipfit=FALSE, tol=1e-5, ...)
     {
       self$lambda <- lambda
       self$lambda2 <- lambda2

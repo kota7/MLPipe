@@ -14,7 +14,7 @@ PipeComponent <- R6::R6Class(
     predict   = function(x=NULL, ...) { NULL },
     predict_proba  = function(x=NULL, ...) { NULL },
 
-    initialize = function() { invisible(self) },
+    initialize = function(...) { invisible(self) },
 
     set_parameters = function(..., as_private=character(0))
     {
@@ -55,7 +55,12 @@ PipeComponent <- R6::R6Class(
 #' @aliases PipeComponent
 #'
 #' @section Usage:
-#' \preformatted{pipe_component()}
+#' \preformatted{pipe_component(...)}
+#'
+#' @section Arguments:
+#' \describe{
+#' \item{\code{...}}{not in use}
+#' }
 #'
 #' @section Value:
 #' \code{PipeComponent} class object

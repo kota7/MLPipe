@@ -32,7 +32,7 @@ PCAExtractor <- R6::R6Class(
       list(x=x2, y=y)
     },
 
-    initialize=function(ncomp, center=TRUE, scale=FALSE)
+    initialize=function(ncomp, center=TRUE, scale=FALSE, ...)
     {
       super$initialize()
       self$ncomp <- ncomp

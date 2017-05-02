@@ -59,7 +59,7 @@ MLP <- R6::R6Class(
       output='sigm', hidden_sizes=10, activation='sigm',
       learn_rate=0.9, learn_rate_decay=1, momentum=0.5,
       num_epoch=5, batch_size=100,
-      hidden_dropout=0, visible_dropout=0)
+      hidden_dropout=0, visible_dropout=0, ...)
     {
       self$output <- output
       self$hidden_sizes <- hidden_sizes

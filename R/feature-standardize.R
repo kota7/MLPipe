@@ -38,12 +38,12 @@ FeatureStandardizer <- R6::R6Class(
 
       n <- dim(x)[1]
       if (self$method == 'l2') {
-        # update by weighted average
+        # online update
         tmp <- update_mean_and_sd(self$centers, self$scales, self$nobs, x)
         self$centers <- tmp$m
         self$scales  <- tmp$s
       } else if (self$method == 'l1') {
-        warnings('incremental fit for L1-method is approximate')
+        message('incremental fit for L1-method is approximate')
         cen <- apply(x, MARGIN=2, FUN=mean, na.rm=TRUE)
         sca  <- apply(x, MARGIN=2, FUN=lsr::aad, na.rm=TRUE)
         # update by weighted average
@@ -86,7 +86,7 @@ FeatureStandardizer <- R6::R6Class(
       list(x=x2, y=y)
     },
 
-    initialize = function(method='l2', tol=sqrt(.Machine$double.eps))
+    initialize = function(method='l2', tol=sqrt(.Machine$double.eps), ...)
     {
       self$method  <- method
       self$tol <- tol

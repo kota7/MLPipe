@@ -30,7 +30,7 @@ Machine learning pipeline
 \describe{
 \item{\preformatted{fit(x = NULL, y = NULL)}}{fit and transform each component}
 \item{\preformatted{transform(x = NULL, y = NULL)}}{transform from beginning to end}
-\item{\preformatted{predict(x = NULL, y = NULL)}}{return predicted values}
+\item{\preformatted{predict(x = NULL, ...)}}{return predicted values}
 \item{\preformatted{incr_fit(x = NULL, y = NULL)}}{fit incrementally each component}
 \item{\preformatted{inv_transform(x = NULL, y = NULL)}}{invert transformation from end to beginning}
 \item{\preformatted{evaluate(funcname, x = NULL, y = NULL, ...)}}{evaluate arbitrary function at the last component}
