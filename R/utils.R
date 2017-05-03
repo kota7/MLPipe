@@ -54,51 +54,45 @@ update_mean_and_sd <- function(m, s, n, x)
 
 
 
-is.R6ClassOf <- function(x, class)
+
+
+validate_function <- function(f, arg_condition, arg_mess, run_wo_arg, quiet=FALSE)
 {
-  # check if x is an R6 class of a certain class, or it inherits it
+  # internal routine for checking the validity of a function
   #
-  # args:
-  #   x: R object
-  #   class: R6 class
+  # args
+  #   f             : function to check
+  #   arg_condition : function "charcter vector -> a logical",
+  #                   that validates the argument names of the function
+  #   arg_message   : message when invalidity detected for arguments (used only if quiet=FALSE)
+  #   run_wo_arg    : logical indidcating if the function should be able to run with no argument
+  #   quiet         : if FALSE, prints message
   #
-  # returns:
-  #   logical
+  # retuns
+  #   logical (TRUE if no problem detected)
 
-  # must be an R6 class in the first place
-  if (!R6::is.R6Class(x)) return(FALSE)
+  if (!is.function(f)) {
+    if (!quiet) message('not a function')
+    return(FALSE)
+  }
 
-  # is x the class?
-  if (identical(x, class)) return(TRUE)
-
-  # maybe the parent?
-  inherit <- x$get_inherit()
-  if (is.null(inherit)) return(FALSE)
-  is.R6ClassOf(inherit, class)
+  a <- methods::formalArgs(f)
+  if (!arg_condition(a)) {
+    if (!quiet) message(arg_mess)
+    return(FALSE)
+  }
+  if (run_wo_arg) {
+    a <- formals(f)
+    # if an argument is not ellipsis (...), and the default value is empty,
+    # then cannot run without argument
+    flg1 <- (names(a) != '...')
+    flg2 <- lapply(a, as.character) %>% unlist() %>% `==`('')
+    flg <- (flg1 & flg2)
+    if (any(flg)) {
+      if (!quiet) message(' requires argument(s): ', paste(names(a)[flg], collapse=', '))
+      return(FALSE)
+    }
+  }
+  TRUE
 }
 
-
-
-
-# multiple value assigment
-# but slow... not in use currently
-# Reference:
-#   https://strugglingthroughproblems.wordpress.com/2010/08/27/matlab-style-multiple-assignment-in%C2%A0r/
-#
-# Usage:
-#   lhs(x, y) %=% c(1, 2)
-lhs <- function(...)
-{
-  o <- as.list(substitute(list(...)))[-1L]
-  class(o) <- 'lhs'
-  o
-}
-
-`%=%` <- function(l, r, ...) UseMethod('%=%')
-
-`%=%.lhs` <- function(l, r)
-{
-  if (length(l) > length(r)) stop('LHS is longer than RHS')
-  envir = as.environment(-1)
-  for (i in seq_along(l)) do.call('<-', list(l[[i]], r[[i]]), envir=envir)
-}

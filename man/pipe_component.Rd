@@ -30,6 +30,7 @@ where functions are defined in children classes.
 
 \describe{
 \item{\code{objects}}{an R object. Typically used to store a model object}
+\item{\code{not_parameters}}{character vector that specifies the names of fields not considered as parameters}
 }
 }
 
@@ -37,20 +38,22 @@ where functions are defined in children classes.
 
 \describe{
 \item{\preformatted{fit(x=NULL, y=NULL)}}{do nothing}
-\item{\preformatted{transpose(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
-\item{\preformatted{predict(x=NULL, ...)}}{return \code{NULL}}
 \item{\preformatted{incr_fit(x=NULL, y=NULL)}}{do nothing}
-\item{\preformatted{predict_proba(x=NULL, ...)}}{return \code{NULL}}
+\item{\preformatted{transpose(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
 \item{\preformatted{inv_transform(x=NULL, y=NULL)}}{return \code{x} and \code{y} as-is}
+\item{\preformatted{predict(x=NULL, ...)}}{return \code{NULL}}
+\item{\preformatted{predict_proba(x=NULL, ...)}}{return \code{NULL}}
+
+\item{\preformatted{set_parameters(...)}}{change parameter values, cannot create new fields}
+\item{\preformatted{get_parameters(param_names=character(0)}}{return parameters as list. if param_names are the names is null or length 0, return all parameters}
+\item{\preformatted{get_parameter_namess()}}{return the names of all parameters}
 }
 }
 \examples{
 p <- pipe_component()
 p$fit(x=c(1,5,8), y=c('a','b','a'))  # nothing happens
 p$transform(x=1:10, y=1:10)          # return data as-is
-
-p$set_parameters(object=1) # use this to update attributes
-# but cannot do so for functions
-#p$set_parameters(fit = function() { 'hello world' })
+p$get_parameters()                   # parameters as list
+p$get_parameter_names()              # parameter names
 }
 

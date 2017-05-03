@@ -33,8 +33,8 @@ See `?(mlbench::Sonar)` for more details about the data.
 ```{r}
 set.seed(123)
 data(Sonar, package='mlbench')
-head(Sonar[1:8])
-head(Sonar[52:61])
+print(dim(Sonar))
+head(Sonar[c(1:4, 57:61)])
 ```
 
 We pick 80% of the samples as the training data, and use the rest for the performance test.

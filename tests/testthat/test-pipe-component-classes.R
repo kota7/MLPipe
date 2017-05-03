@@ -13,7 +13,7 @@ test_that('Are pipe components valid?', {
   {
     x <- get(name, envir=envir)
     if (!is.PipeComponentClass(x)) next
-    expect_true(validate_pipe_component_class(x, verbose=1))
+    expect_true(validate_pipe_component(x, verbose=1))
   }
 })
 

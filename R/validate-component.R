@@ -3,7 +3,7 @@
 #' Check if an R6 class satisfies the minimum conditions for pipe components
 #'
 #' @param x R object, typically an \code{R6ClassGenerator}
-#' @param verbose integer. if 0, no message is given. if 1, reports only invalidity. it 2+, reports all
+#' @param verbose integer. if 0, no message is given. if 1, reports only invalidity. if 2, reports simple progress. if 3+, reports details.
 #'
 #' @return logical that indicates that \code{x} satisfies the minimum conditions for a valid pipe component class
 #'
@@ -11,9 +11,13 @@
 #' @export
 #' @seealso \code{\link{custom_pipe_component}}
 #' @examples
-#' validate_pipe_component_class(MLP)
-#' validate_pipe_component_class(PipeComponent)
-validate_pipe_component_class <- function(x, verbose=2)
+#' validate_pipe_component(MLP)
+#' validate_pipe_component(PipeComponent)
+#'
+#' # bad examples
+#' validate_pipe_component(custom_pipe_component(predict=function(x, y, ...) { }))
+#' validate_pipe_component(custom_pipe_component(get_parameters=function(z) { }))
+validate_pipe_component <- function(x, verbose=3)
 {
 
   ## must be an R6 class generator
@@ -37,81 +41,69 @@ validate_pipe_component_class <- function(x, verbose=2)
 
 
   ## check for required public methods
-  find_public_method <- function(x, fname)
-  {
-    # check if fname is x's public method
-    inherit <- x$get_inherit()
-    if (fname %in% names(x$public_methods)) return(x$public_methods[[fname]])
-    if (is.null(inherit)) return(NULL)
-    find_public_method(inherit, fname)
-  }
-  is_public_method <- function(x, fname) { !is.null(find_public_method(x, fname)) }
-
   required_public_methods <- c('fit', 'incr_fit',
                                'transform', 'inv_transform',
                                'predict', 'predict_proba',
-                               'set_parameters', 'initialize')
+                               'set_parameters', 'initialize',
+                               'get_parameters', 'get_parameter_names')
   for (m in required_public_methods)
   {
     if (!is_public_method(x, m)) {
       if (verbose >= 1) message(m, ' method is not defined')
       return(FALSE)
     }
+    if (verbose>=3) cat(' ', m, '...exists\n')
   }
   if (verbose >= 2) cat(':) found all required public methods\n')
 
-  ## check the arguments of methods
-  public_methods_only_xy <- c('fit', 'incr_fit',
-                              'transform', 'inv_transform')
+
+
+
+  ## methods that must take (x, y) as arguments
+  public_methods_only_xy <- c('fit', 'incr_fit', 'transform', 'inv_transform')
+  arg_condition <- function(a) {(length(a) == 2) && all(a==c('x','y'))}
+  mess <- 'must take (x, y) as arguments and no others'
   for (m in public_methods_only_xy)
   {
-    f <- find_public_method(x, m)
-    stopifnot(is.function(f))
-    a <- formalArgs(f)
-    if (!identical(a, c('x', 'y'))) {
-      if (verbose >= 1) {
-        message('first two arguments of ', m,
-                ' must by "x, y" where we have: ',
-                paste0(a, collapse=', '))
-        return(FALSE)
-      }
-    }
+    if (!validate_public_method(x, m, arg_condition=arg_condition, arg_mess=mess,
+                                quiet=(verbose<1))) return(FALSE)
+    if (verbose>=3) cat(' ', m, '...good\n')
   }
+
+  ## methods that must take x but not y
   public_methods_x_not_y <- c('predict', 'predict_proba')
+  arg_condition <- function(a) { length(a) > 1 && a[1]=='x' && !('y' %in% a) }
+  mess <- 'must take x but not y as argument'
   for (m in public_methods_x_not_y)
   {
-    f <- find_public_method(x, m)
-    stopifnot(is.function(f))
-    a <- formalArgs(f)
-    if (length(a) < 1 || a[1] != 'x') {
-      if (verbose >= 1) {
-        message('first argument of ', m,
-                ' must by "x" where we have: ',
-                paste0(a, collapse=', '))
-        return(FALSE)
-      }
-    }
-    if ('y' %in% a) {
-      if (verbose >= 1) {
-        message(m, ' must not have y argument')
-        return(FALSE)
-      }
-    }
+    if (!validate_public_method(x, m, arg_condition=arg_condition, arg_mess=mess,
+                                quiet=(verbose<1))) return(FALSE)
+    if (verbose>=3) cat(' ', m, '...good\n')
   }
-  public_methods_dots <- c('predict', 'predict_proba',
-                           'set_parameters', 'initialize')
+
+  ## methods that must accepts ...
+  public_methods_dots <- c('predict', 'predict_proba', 'set_parameters', 'initialize')
+  arg_condition <- function(a) { '...' %in% a }
+  mess <- ' must accept "..." argument'
   for (m in public_methods_dots)
   {
-    f <- find_public_method(x, m)
-    stopifnot(is.function(f))
-    a <- formalArgs(f)
-    if (!('...' %in% a)) {
-      if (verbose >= 1) {
-        message(m, ' must accept "..." argument')
-        return(FALSE)
-      }
-    }
+    if (!validate_public_method(x, m, arg_condition=arg_condition, arg_mess=mess,
+                                quiet=(verbose<1))) return(FALSE)
+    if (verbose>=3) cat(' ', m, '...good\n')
   }
+
+
+  ## methods that must be able to run with no arguments
+  public_methods_no_arg_ok <- 'get_parameters'
+  for (m in public_methods_no_arg_ok)
+  {
+    if (!validate_public_method(x, m, run_wo_arg=TRUE, quiet=(verbose<1))) return(FALSE)
+    if (verbose>=3) cat(' ', m, '...good\n')
+  }
+
+
+
+
   if (verbose >= 2) cat(':) methods have proper arguments\n')
 
   if (verbose >= 2) cat(':D passed all validation!\n')

@@ -1,17 +1,20 @@
 
-#' @export
 GLM <- R6::R6Class(
   'LinearRegression', inherit=PipeComponent,
 
   public = list(
     family='gaussian', intercept=TRUE, standardize=TRUE,
-    alpha=1, lambda=0, choose_lambda=TRUE,
+    alpha=1, lambda=0.01, lambda_candidates=NULL,
+
+    offset_index=0,
+
+    choose_lambda=TRUE,
 
     # decided to fix lambda to a single value
     #nlambda=100,
     #lambda_min_ratio=0.01,
 
-    group_mutinom = FALSE,
+    group_multinom = FALSE,
     modified_newton = FALSE,
 
     lower=-Inf, upper=+Inf,
