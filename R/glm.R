@@ -47,31 +47,31 @@ GLM <- R6::R6Class(
       invisible(self)
     },
 
-    predict = function(x, lambda=NULL, ...)
+    predict = function(x, ...)
     {
       tmp <- private$.format_x(x)
       x <- tmp$x
       os <- tmp$offset
-      lambda <- if (is.null(lambda)) self$lambda else lambda
+      #lambda <- if (is.null(lambda)) self$lambda else lambda
       ty <- if (self$family %in% c('binomial', 'multinomial')) 'class' else 'response'
       if (is.null(os)) {
-        out <- predict(self$object, x, s=lambda, type=ty, ...)
+        out <- predict(self$object, x, s=self$lambda, type=ty, ...)
       } else {
-        out <- predict(self$object, x, s=lambda, type=ty, offset=os, ...)
+        out <- predict(self$object, x, s=self$lambda, type=ty, offset=os, ...)
       }
       drop(out)
     },
 
-    predict_proba = function(x, lambda=NULL, ...)
+    predict_proba = function(x, ...)
     {
       tmp <- private$.format_x(x)
       x <- tmp$x
       os <- tmp$offset
-      lambda <- if (is.null(lambda)) self$lambda else lambda
+      #lambda <- if (is.null(lambda)) self$lambda else lambda
       if (is.null(os)) {
-        out <- predict(self$object, x, s=lambda, type='response', ...)
+        out <- predict(self$object, x, s=self$lambda, type='response', ...)
       } else {
-        out <- predict(self$object, x, s=lambda, type='response', offset=os, ...)
+        out <- predict(self$object, x, s=self$lambda, type='response', offset=os, ...)
       }
       if (!(self$family %in% c('binomial', 'multinomial'))) {
         warning('probability prediction may not be appropriate for family ', self$family)
@@ -79,11 +79,10 @@ GLM <- R6::R6Class(
       drop(out)
     },
 
-    get_coef = function(lambda=NULL, nonzero_only=FALSE, ...)
+    get_coef = function(nonzero_only=FALSE, ...)
     {
-      lambda <- if (is.null(lambda)) self$lambda else lambda
       ty <- if (nonzero_only) 'nonzero' else 'coefficients'
-      predict(self$object, s=lambda, type=ty)
+      predict(self$object, s=self$lambda, type=ty)
     },
 
 
