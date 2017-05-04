@@ -98,9 +98,9 @@ MLP <- R6::R6Class(
       }
 
       if (self$output == 'softmax') {
-        return(-mean(y*log(p)))
+        return(-mean(rowSums(y*log(p), na.rm=TRUE), na.rm=TRUE))
       } else {
-        return(-mean(y*log(p) + (1-y)*log(1-p)))
+        return(-mean(y*log(p) + (1-y)*log(1-p), na.rm=TRUE))
       }
     },
 
@@ -232,6 +232,7 @@ MLP <- R6::R6Class(
 #' y <- c(rep(1, 50), rep(0, 50))
 #' m <- mlp(hidden_sizes=5, learn_rate=0.8, num_epoch=3)
 #' m$fit(x, y)
+#' m$mse(x, y)
 #'
 #' # classification example
 #' data(iris)
@@ -242,6 +243,7 @@ MLP <- R6::R6Class(
 #' m$fit(x[tr,], y[tr])
 #' table(y[-tr], m$predict(x[-tr,]))
 #' m$accuracy(x[-tr,], y[-tr])
+#' m$cross_entropy(x[-tr,], y[-tr])
 #'
 #' \dontrun{
 #' # regression example (takes a few seconds)

@@ -29,7 +29,7 @@ PipeComponent <- R6::R6Class(
 
       flg <- names(params) %in% self$not_parameters
       if (any(flg)) {
-        message(names(params[flg]), ': not parameters')
+        warning(names(params[flg]), ': not parameters')
         params <- params[!flg]
       }
       if (length(params)==0) return(invisible(self))

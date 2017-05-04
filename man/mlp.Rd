@@ -77,6 +77,7 @@ x <- matrix(c(Var1, Var2), nrow = 100, ncol = 2)
 y <- c(rep(1, 50), rep(0, 50))
 m <- mlp(hidden_sizes=5, learn_rate=0.8, num_epoch=3)
 m$fit(x, y)
+m$mse(x, y)
 
 # classification example
 data(iris)
@@ -87,6 +88,7 @@ m <- mlp_classifier(num_epoch=300)
 m$fit(x[tr,], y[tr])
 table(y[-tr], m$predict(x[-tr,]))
 m$accuracy(x[-tr,], y[-tr])
+m$cross_entropy(x[-tr,], y[-tr])
 
 \dontrun{
 # regression example (takes a few seconds)

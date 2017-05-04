@@ -82,7 +82,9 @@ validate_pipe_component <- function(x, verbose=3)
   }
 
   ## methods that must accepts ...
-  public_methods_dots <- c('predict', 'predict_proba', 'set_parameters', 'initialize')
+  public_methods_dots <- c('initialize',
+                           'predict', 'predict_proba',
+                           'set_parameters', 'initialize')
   arg_condition <- function(a) { '...' %in% a }
   mess <- ' must accept "..." argument'
   for (m in public_methods_dots)
